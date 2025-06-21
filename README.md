@@ -1,1 +1,0 @@
-# FASAR-Gest-o-Inteligente-de-Recibos-e-Desempenho
