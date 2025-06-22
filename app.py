@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request
 import os
 from utils.ocr_reader import extrair_texto_de_pdf, extrair_texto_de_imagem, extrair_dados
+from utils.db_models import session, Entidade
+from utils.pdf_exporter import gerar_pdf_vendas
 
 app = Flask(__name__)
 UPLOAD_FOLDER = os.path.join('static', 'uploads')
@@ -87,4 +89,21 @@ def exportar_pdf():
 
     return send_file(buffer, as_attachment=True, download_name="relatorio_vendas.pdf", mimetype='application/pdf')
 
-    from utils.pdf_exporter import gerar_pdf_vendas
+ @app.route('/cadastro', methods=['GET', 'POST'])
+def cadastro():
+    if request.method == 'POST':
+        nova = Entidade(
+            tipo=request.form['tipo'],
+            nome=request.form['nome'],
+            documento=request.form['documento'],
+            banco=request.form['banco'],
+            agencia=request.form['agencia'],
+            conta=request.form['conta'],
+            pix=request.form['pix']
+        )
+        session.add(nova)
+        session.commit()
+
+    registros = session.query(Entidade).all()
+    return render_template("cadastro.html", registros=registros)
+   
