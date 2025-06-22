@@ -1,1 +1,39 @@
+{% extends "layout.html" %}
+{% block content %}
+<h1>Leitor de Comprovantes (PDF / JPEG)</h1>
+
+<form action="/leitor" method="post" enctype="multipart/form-data">
+  <label for="files">Selecionar arquivos (até 10):</label>
+  <input type="file" name="files" id="files" multiple accept=".pdf, .jpeg, .jpg, .png" required>
+  <button type="submit">Analisar Comprovantes</button>
+</form>
+
+{% if resultados %}
+  <h2>Resultados da Extração:</h2>
+  <table border="1" cellpadding="10">
+    <tr>
+      <th>Data</th>
+      <th>Valor</th>
+      <th>Pagador</th>
+      <th>CPF/CNPJ Pagador</th>
+      <th>Recebedor</th>
+      <th>CPF/CNPJ Recebedor</th>
+      <th>Banco</th>
+      <th>ID Transação</th>
+    </tr>
+    {% for item in resultados %}
+      <tr>
+        <td>{{ item.data }}</td>
+        <td>{{ item.valor }}</td>
+        <td>{{ item.pagador }}</td>
+        <td>{{ item.cpf_pagador }}</td>
+        <td>{{ item.recebedor }}</td>
+        <td>{{ item.cpf_recebedor }}</td>
+        <td>{{ item.banco }}</td>
+        <td>{{ item.id_transacao }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+{% endif %}
+{% endblock %}
 
