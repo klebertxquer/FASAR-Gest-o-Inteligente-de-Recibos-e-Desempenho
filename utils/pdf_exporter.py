@@ -33,3 +33,15 @@ def gerar_pdf_vendas(dados, colunas):
     pdf.build(elementos)
     buffer.seek(0)
     return buffer
+
+@app.route('/exportar_pdf', methods=['POST'])
+def exportar_pdf():
+    nome_arquivo = request.form['arquivo_excel']
+    vendedor_filtro = request.form['vendedor']
+    caminho = os.path.join(app.config['UPLOAD_FOLDER'], nome_arquivo)
+
+    dados, colunas = ler_planilha(caminho)
+    filtrado = [linha for linha in dados if str(linha.get('Vendedor', '')) == vendedor_filtro]
+
+    buffer = gerar_pdf_vendas(filtrado, colunas)
+    return send_file(buffer, as_attachment=True, download_name="relatorio_vendas.pdf", mimetype='application/pdf')
