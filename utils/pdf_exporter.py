@@ -18,3 +18,18 @@ def exportar_pdf(caminho_saida, titulo, dados):
 
     c.save()
 
+from reportlab.platypus import SimpleDocTemplate, Table
+import io
+
+def gerar_pdf_vendas(dados, colunas):
+    buffer = io.BytesIO()
+    pdf = SimpleDocTemplate(buffer)
+    
+    # Monta a tabela
+    tabela = [colunas] + [[str(linha.get(col, '')) for col in colunas] for linha in dados]
+    elementos = [Table(tabela)]
+
+    # Gera PDF
+    pdf.build(elementos)
+    buffer.seek(0)
+    return buffer
