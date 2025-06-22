@@ -12,12 +12,10 @@ app = Flask(__name__)
 UPLOAD_FOLDER = os.path.join('static', 'uploads')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-# Página inicial
 @app.route('/')
 def home():
     return render_template("dashboard.html")
 
-# Página de upload e leitura de comprovantes
 @app.route('/leitor', methods=['GET', 'POST'])
 def leitor():
     resultados = []
@@ -26,23 +24,18 @@ def leitor():
         for arquivo in arquivos:
             if arquivo.filename == '':
                 continue
-
             caminho = os.path.join(app.config['UPLOAD_FOLDER'], arquivo.filename)
             arquivo.save(caminho)
-
             if arquivo.filename.lower().endswith('.pdf'):
                 texto = extrair_texto_de_pdf(caminho)
             elif arquivo.filename.lower().endswith(('.jpg', '.jpeg', '.png')):
                 texto = extrair_texto_de_imagem(caminho)
             else:
                 texto = ""
-
             dados_extraidos = extrair_dados(texto)
             resultados.append(dados_extraidos)
-
     return render_template("leitor.html", resultados=resultados)
 
-# Página de análise Excel
 @app.route('/excel', methods=['GET', 'POST'])
 def excel():
     dados = []
@@ -62,20 +55,16 @@ def exportar_pdf():
     nome_arquivo = request.form['arquivo_excel']
     vendedor_filtro = request.form['vendedor']
     caminho = os.path.join(app.config['UPLOAD_FOLDER'], nome_arquivo)
-
     dados, colunas = ler_planilha(caminho)
     filtrado = [linha for linha in dados if str(linha.get('Vendedor', '')) == vendedor_filtro]
-
     buffer = io.BytesIO()
     pdf = SimpleDocTemplate(buffer)
     tabela = [colunas] + [[linha[col] for col in colunas] for linha in filtrado]
     elementos = [Table(tabela)]
     pdf.build(elementos)
     buffer.seek(0)
-
     return send_file(buffer, as_attachment=True, download_name="relatorio_vendas.pdf", mimetype='application/pdf')
 
-# Página de cadastro
 @app.route('/cadastro', methods=['GET', 'POST'])
 def cadastro():
     if request.method == 'POST':
@@ -90,7 +79,6 @@ def cadastro():
         )
         session.add(nova)
         session.commit()
-
     registros = session.query(Entidade).all()
     return render_template("cadastro.html", registros=registros)
 
