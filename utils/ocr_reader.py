@@ -17,14 +17,13 @@ def extrair_texto_de_imagem(caminho_imagem):
     return texto
 
 def extrair_dados(texto):
-    # Expressões regulares simples
-    valor = re.search(r'R\$ ?[\d\.,]+', texto)
-    data = re.search(r'\d{2}/\d{2}/\d{4}', texto)
+    valor = re.search(r'R\\$ ?[\\d\\.,]+', texto)
+    data = re.search(r'\\d{2}/\\d{2}/\\d{4}', texto)
     pagador = re.search(r'(Pagador|Devedor|Emitente|Remetente).*?: *(.*)', texto, re.IGNORECASE)
     recebedor = re.search(r'(Destinatário|Recebedor|Favorecido|Credor).*?: *(.*)', texto, re.IGNORECASE)
-    cpf_cnpj = re.findall(r'\d{2}\.?\d{3}\.?\d{3}/?\d{4}-?\d{2}', texto)
+    cpf_cnpj = re.findall(r'\\d{2}\\.?\\d{3}\\.?\\d{3}/?\\d{4}-?\\d{2}', texto)
     banco = re.search(r'(Banco|Instituição|Caixa Econômica|Bradesco|Santander|Itaú)', texto, re.IGNORECASE)
-    id_tx = re.search(r'\b[A-Z0-9]{20,}\b', texto)
+    id_tx = re.search(r'\\b[A-Z0-9]{20,}\\b', texto)
 
     return {
         'data': data.group() if data else '',
@@ -36,4 +35,3 @@ def extrair_dados(texto):
         'banco': banco.group() if banco else '',
         'id_transacao': id_tx.group() if id_tx else ''
     }
-
