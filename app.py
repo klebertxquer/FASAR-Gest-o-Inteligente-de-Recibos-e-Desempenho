@@ -87,3 +87,4 @@ def exportar_pdf():
 
     return send_file(buffer, as_attachment=True, download_name="relatorio_vendas.pdf", mimetype='application/pdf')
 
+    from utils.pdf_exporter import gerar_pdf_vendas
