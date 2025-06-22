@@ -1,1 +1,62 @@
+{% extends "layout.html" %}
+{% block content %}
+<h1>Cadastro de Entidades</h1>
+
+<form method="post">
+  <label>Tipo:</label>
+  <select name="tipo" required>
+    <option value="Empresa">Empresa</option>
+    <option value="Cliente">Cliente</option>
+    <option value="Vendedor">Vendedor</option>
+    <option value="Parceiro">Parceiro</option>
+  </select>
+
+  <label>Nome:</label>
+  <input type="text" name="nome" required>
+
+  <label>CNPJ ou CPF:</label>
+  <input type="text" name="documento" required>
+
+  <label>Banco:</label>
+  <input type="text" name="banco">
+
+  <label>Agência:</label>
+  <input type="text" name="agencia">
+
+  <label>Conta:</label>
+  <input type="text" name="conta">
+
+  <label>Chave Pix:</label>
+  <input type="text" name="pix">
+
+  <button type="submit">Salvar Cadastro</button>
+</form>
+
+{% if registros %}
+  <h2>Entidades Cadastradas</h2>
+  <table border="1" cellpadding="5">
+    <tr>
+      <th>Tipo</th>
+      <th>Nome</th>
+      <th>Documento</th>
+      <th>Banco</th>
+      <th>Agência</th>
+      <th>Conta</th>
+      <th>Pix</th>
+    </tr>
+    {% for r in registros %}
+      <tr>
+        <td>{{ r.tipo }}</td>
+        <td>{{ r.nome }}</td>
+        <td>{{ r.documento }}</td>
+        <td>{{ r.banco }}</td>
+        <td>{{ r.agencia }}</td>
+        <td>{{ r.conta }}</td>
+        <td>{{ r.pix }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+{% endif %}
+{% endblock %}
+
 
