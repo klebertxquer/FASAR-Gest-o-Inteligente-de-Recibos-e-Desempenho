@@ -1,8 +1,12 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, send_file
 import os
+import io
+import pandas as pd
 from utils.ocr_reader import extrair_texto_de_pdf, extrair_texto_de_imagem, extrair_dados
 from utils.db_models import session, Entidade
 from utils.pdf_exporter import gerar_pdf_vendas
+from utils.excel_analyzer import ler_planilha
+from reportlab.platypus import SimpleDocTemplate, Table
 
 app = Flask(__name__)
 UPLOAD_FOLDER = os.path.join('static', 'uploads')
@@ -38,25 +42,7 @@ def leitor():
 
     return render_template("leitor.html", resultados=resultados)
 
-# Página de análise Excel (a ser implementada)
-@app.route('/excel')
-def excel():
-    return render_template("excel.html")
-
-# Página de cadastro (a ser implementada)
-@app.route('/cadastro')
-def cadastro():
-    return render_template("cadastro.html")
-
-if __name__ == '__main__':
-    app.run(debug=True)
-
-from utils.excel_analyzer import ler_planilha
-import pandas as pd
-from flask import send_file
-import io
-from reportlab.platypus import SimpleDocTemplate, Table
-
+# Página de análise Excel
 @app.route('/excel', methods=['GET', 'POST'])
 def excel():
     dados = []
@@ -89,7 +75,8 @@ def exportar_pdf():
 
     return send_file(buffer, as_attachment=True, download_name="relatorio_vendas.pdf", mimetype='application/pdf')
 
- @app.route('/cadastro', methods=['GET', 'POST'])
+# Página de cadastro
+@app.route('/cadastro', methods=['GET', 'POST'])
 def cadastro():
     if request.method == 'POST':
         nova = Entidade(
@@ -106,4 +93,6 @@ def cadastro():
 
     registros = session.query(Entidade).all()
     return render_template("cadastro.html", registros=registros)
-   
+
+if __name__ == '__main__':
+    app.run(debug=True)
