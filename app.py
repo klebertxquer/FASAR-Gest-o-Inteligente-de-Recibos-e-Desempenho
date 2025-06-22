@@ -49,4 +49,41 @@ def cadastro():
 if __name__ == '__main__':
     app.run(debug=True)
 
+from utils.excel_analyzer import ler_planilha
+import pandas as pd
+from flask import send_file
+import io
+from reportlab.platypus import SimpleDocTemplate, Table
+
+@app.route('/excel', methods=['GET', 'POST'])
+def excel():
+    dados = []
+    colunas = []
+    nome_arquivo = ''
+    if request.method == 'POST':
+        arquivo = request.files['arquivo_excel']
+        if arquivo:
+            nome_arquivo = arquivo.filename
+            caminho = os.path.join(app.config['UPLOAD_FOLDER'], nome_arquivo)
+            arquivo.save(caminho)
+            dados, colunas = ler_planilha(caminho)
+    return render_template("excel.html", dados=dados, colunas=colunas, nome_arquivo=nome_arquivo)
+
+@app.route('/exportar_pdf', methods=['POST'])
+def exportar_pdf():
+    nome_arquivo = request.form['arquivo_excel']
+    vendedor_filtro = request.form['vendedor']
+    caminho = os.path.join(app.config['UPLOAD_FOLDER'], nome_arquivo)
+
+    dados, colunas = ler_planilha(caminho)
+    filtrado = [linha for linha in dados if str(linha.get('Vendedor', '')) == vendedor_filtro]
+
+    buffer = io.BytesIO()
+    pdf = SimpleDocTemplate(buffer)
+    tabela = [colunas] + [[linha[col] for col in colunas] for linha in filtrado]
+    elementos = [Table(tabela)]
+    pdf.build(elementos)
+    buffer.seek(0)
+
+    return send_file(buffer, as_attachment=True, download_name="relatorio_vendas.pdf", mimetype='application/pdf')
 
