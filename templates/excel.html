@@ -1,1 +1,37 @@
+{% extends "layout.html" %}
+{% block content %}
+<h1>Análise de Planilha Excel</h1>
+
+<form action="/excel" method="post" enctype="multipart/form-data">
+  <input type="file" name="arquivo_excel" accept=".xlsx" required>
+  <button type="submit">Analisar Planilha</button>
+</form>
+
+{% if colunas %}
+  <h2>Dados Encontrados:</h2>
+  <form action="/exportar_pdf" method="post">
+    <input type="hidden" name="arquivo_excel" value="{{ nome_arquivo }}">
+    <select name="vendedor">
+      {% for item in dados %}
+        <option value="{{ item['Vendedor'] }}">{{ item['Vendedor'] }}</option>
+      {% endfor %}
+    </select>
+    <button type="submit">Exportar PDF</button>
+  </form>
+  <table border="1" cellpadding="6">
+    <tr>
+      {% for col in colunas %}
+        <th>{{ col }}</th>
+      {% endfor %}
+    </tr>
+    {% for linha in dados %}
+      <tr>
+        {% for col in colunas %}
+          <td>{{ linha[col] }}</td>
+        {% endfor %}
+      </tr>
+    {% endfor %}
+  </table>
+{% endif %}
+{% endblock %}
 
