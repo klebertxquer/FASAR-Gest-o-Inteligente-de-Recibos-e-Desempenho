@@ -1,0 +1,23 @@
+# Ignorar banco de dados local
+data/banco.db
+*.db
+
+# Ignorar arquivos de upload do usuário
+static/uploads/
+*.xlsx
+*.pdf
+*.jpeg
+*.jpg
+*.png
+
+# Ignorar arquivos de cache e temporários do sistema
+__pycache__/
+*.pyc
+
+# Ignorar ambiente virtual (se houver)
+venv/
+.env
+
+# Ignorar arquivos gerados pelo VSCode ou editores
+.vscode/
+.DS_Store
