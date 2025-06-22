@@ -1,1 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FASAR Gestão Inteligente</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/static/service-worker.js')
+          .then(reg => console.log('Service Worker registrado:', reg.scope))
+          .catch(err => console.log('Erro ao registrar SW:', err));
+      });
+    }
+  </script>
+</head>
+<body>
+  <div class="sidebar">
+    <h2>FASAR</h2>
+    <a href="/">Dashboard</a>
+    <a href="/leitor">Leitor OCR</a>
+    <a href="/excel">Análise Excel</a>
+    <a href="/cadastro">Cadastro</a>
+  </div>
+  <div class="main">
+    {% block content %}{% endblock %}
+  </div>
+</body>
+</html>
 
