@@ -6,6 +6,9 @@
   <title>FASAR Gestão Inteligente</title>
   <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
 <meta name="theme-color" content="#003366">
+<!-- PWA Support -->
+<link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+<meta name="theme-color" content="#003366">
 <link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/icon-192.png') }}">
 <script>
   if ('serviceWorker' in navigator) {
@@ -14,6 +17,7 @@
     });
   }
 </script>
+
 </head>
 <body>
   <div class="sidebar">
