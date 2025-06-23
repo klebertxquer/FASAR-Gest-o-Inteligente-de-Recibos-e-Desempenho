@@ -26,14 +26,13 @@ def exportar_pdf_simples(caminho_saida, titulo, dados):
 def gerar_pdf_vendas(dados, colunas):
     """Gera buffer PDF com os dados filtrados."""
     buffer = io.BytesIO()
-    pdf = SimpleDocTemplate(buffer)
+    pdf = SimpleDocTemplate(buffer, pagesize=A4)
 
+    # Monta a tabela com os dados
     tabela = [colunas] + [[str(linha.get(col, '')) for col in colunas] for linha in dados]
     elementos = [Table(tabela)]
 
+    # Constrói o PDF
     pdf.build(elementos)
     buffer.seek(0)
     return buffer
-
-
-
