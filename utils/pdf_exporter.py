@@ -36,3 +36,5 @@ def gerar_pdf_vendas(dados, colunas):
     pdf.build(elementos)
     buffer.seek(0)
     return buffer
+
+
