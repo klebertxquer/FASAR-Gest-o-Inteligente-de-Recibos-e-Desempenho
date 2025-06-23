@@ -1,3 +1,5 @@
+# utils/pdf_exporter.py
+
 import io
 from reportlab.platypus import SimpleDocTemplate, Table
 from reportlab.lib.pagesizes import A4
@@ -32,3 +34,6 @@ def gerar_pdf_vendas(dados, colunas):
     pdf.build(elementos)
     buffer.seek(0)
     return buffer
+
+
+
