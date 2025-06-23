@@ -35,6 +35,7 @@ def gerar_pdf_vendas(dados, colunas):
     return buffer
 
 @app.route('/exportar_pdf', methods=['POST'])
+
 def exportar_pdf():
     nome_arquivo = request.form['arquivo_excel']
     vendedor_filtro = request.form['vendedor']
