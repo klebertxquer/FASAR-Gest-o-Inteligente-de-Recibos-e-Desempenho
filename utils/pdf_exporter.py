@@ -1,5 +1,7 @@
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
+from reportlab.platypus import SimpleDocTemplate, Table
+import io
 
 def exportar_pdf(caminho_saida, titulo, dados):
     c = canvas.Canvas(caminho_saida, pagesize=A4)
@@ -18,31 +20,14 @@ def exportar_pdf(caminho_saida, titulo, dados):
 
     c.save()
 
-from reportlab.platypus import SimpleDocTemplate, Table
-import io
-
 def gerar_pdf_vendas(dados, colunas):
     buffer = io.BytesIO()
     pdf = SimpleDocTemplate(buffer)
     
-    # Monta a tabela
     tabela = [colunas] + [[str(linha.get(col, '')) for col in colunas] for linha in dados]
     elementos = [Table(tabela)]
 
-    # Gera PDF
     pdf.build(elementos)
     buffer.seek(0)
     return buffer
 
-@app.route('/exportar_pdf', methods=['POST'])
-
-def exportar_pdf():
-    nome_arquivo = request.form['arquivo_excel']
-    vendedor_filtro = request.form['vendedor']
-    caminho = os.path.join(app.config['UPLOAD_FOLDER'], nome_arquivo)
-
-    dados, colunas = ler_planilha(caminho)
-    filtrado = [linha for linha in dados if str(linha.get('Vendedor', '')) == vendedor_filtro]
-
-    buffer = gerar_pdf_vendas(filtrado, colunas)
-    return send_file(buffer, as_attachment=True, download_name="relatorio_vendas.pdf", mimetype='application/pdf')
