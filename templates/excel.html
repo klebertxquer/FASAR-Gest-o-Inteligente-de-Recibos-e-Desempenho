@@ -1,37 +1,69 @@
-{% extends "layout.html" %}
-{% block content %}
-<h1>Análise de Planilha Excel</h1>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Visualizar Planilha Excel</title>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f8f8f8; padding: 20px; }
+    .container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    h1 { text-align: center; margin-bottom: 20px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 8px 12px; border: 1px solid #ccc; }
+    form { margin-top: 20px; }
+    label { font-weight: bold; }
+    input[type="text"] { padding: 8px; width: 250px; }
+    button { padding: 10px 20px; margin-top: 10px; background: #007BFF; color: white; border: none; border-radius: 4px; }
+    button:hover { background: #0056b3; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Visualização da Planilha</h1>
 
-<form action="/excel" method="post" enctype="multipart/form-data">
-  <input type="file" name="arquivo_excel" accept=".xlsx" required>
-  <button type="submit">Analisar Planilha</button>
-</form>
+    {% if nome_arquivo %}
+      <h3>Arquivo carregado: {{ nome_arquivo }}</h3>
 
-{% if colunas %}
-  <h2>Dados Encontrados:</h2>
-  <form action="/exportar_pdf" method="post">
-    <input type="hidden" name="arquivo_excel" value="{{ nome_arquivo }}">
-    <select name="vendedor">
-      {% for item in dados %}
-        <option value="{{ item['Vendedor'] }}">{{ item['Vendedor'] }}</option>
-      {% endfor %}
-    </select>
-    <button type="submit">Exportar PDF</button>
-  </form>
-  <table border="1" cellpadding="6">
-    <tr>
-      {% for col in colunas %}
-        <th>{{ col }}</th>
-      {% endfor %}
-    </tr>
-    {% for linha in dados %}
-      <tr>
-        {% for col in colunas %}
-          <td>{{ linha[col] }}</td>
-        {% endfor %}
-      </tr>
-    {% endfor %}
-  </table>
-{% endif %}
-{% endblock %}
+      <form method="POST" action="/exportar_pdf">
+        <input type="hidden" name="arquivo_excel" value="{{ nome_arquivo }}">
+        <label for="vendedor">Filtrar por Vendedor:</label>
+        <input type="text" id="vendedor" name="vendedor" placeholder="Nome do Vendedor">
+        <button type="submit">Exportar PDF</button>
+      </form>
 
+      <table id="tabela_excel">
+        <thead>
+          <tr>
+            {% for col in colunas %}
+              <th>{{ col }}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for linha in dados %}
+            <tr>
+              {% for col in colunas %}
+                <td>{{ linha[col] }}</td>
+              {% endfor %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>Nenhum arquivo Excel foi carregado.</p>
+    {% endif %}
+  </div>
+
+  <script>
+    $(document).ready(function () {
+      $('#tabela_excel').DataTable({
+        language: {
+          url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json"
+        }
+      });
+    });
+  </script>
+</body>
+</html>
