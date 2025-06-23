@@ -6,10 +6,10 @@ from utils.ocr_reader import extrair_texto_de_pdf, extrair_texto_de_imagem, extr
 from utils.db_models import session, Entidade
 from utils.pdf_exporter import gerar_pdf_vendas
 from utils.excel_analyzer import ler_planilha
-from reportlab.platypus import SimpleDocTemplate, Table
 
 app = Flask(__name__)
 UPLOAD_FOLDER = os.path.join('static', 'uploads')
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @app.route('/')
@@ -55,14 +55,11 @@ def exportar_pdf():
     nome_arquivo = request.form['arquivo_excel']
     vendedor_filtro = request.form['vendedor']
     caminho = os.path.join(app.config['UPLOAD_FOLDER'], nome_arquivo)
+
     dados, colunas = ler_planilha(caminho)
     filtrado = [linha for linha in dados if str(linha.get('Vendedor', '')) == vendedor_filtro]
-    buffer = io.BytesIO()
-    pdf = SimpleDocTemplate(buffer)
-    tabela = [colunas] + [[linha[col] for col in colunas] for linha in filtrado]
-    elementos = [Table(tabela)]
-    pdf.build(elementos)
-    buffer.seek(0)
+
+    buffer = gerar_pdf_vendas(filtrado, colunas)
     return send_file(buffer, as_attachment=True, download_name="relatorio_vendas.pdf", mimetype='application/pdf')
 
 @app.route('/cadastro', methods=['GET', 'POST'])
@@ -84,3 +81,4 @@ def cadastro():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
